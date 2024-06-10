@@ -1,0 +1,114 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head"></head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div class="bg-light">
+    <div class="py-5">
+        <div class="container py-5 bg-white shadow-sm card-height">
+            <div class="row mx-3">
+                <th:block th:replace="fragments/account-fragments :: account-sidebar"/>
+                <div class="col-md-9 mb-5">
+                    <th:block th:replace="fragments/common-fragments :: info-title(text='Edit book', icon='fas fa-edit mr-2')"/>
+                    <form method="post" action="/admin/edit/book" enctype="multipart/form-data">
+                        <div class="row mt-5">
+                            <div class="col-md-6">
+                                <th:block th:replace="fragments/account-fragments :: edit-book-input(
+                                    title='ISBN',
+                                    name='isbn',
+                                    value=(${book.getIsbn()}),
+                                    error=(${isbnError})
+                                )"/>
+                                <th:block th:replace="fragments/account-fragments :: edit-book-input(
+                                    title='Book title',
+                                    name='bookTitle',
+                                    value=(${book.getBookTitle()}),
+                                    error=(${bookTitleError})
+                                )"/>
+                                <th:block th:replace="fragments/account-fragments :: edit-book-input(
+                                    title='Brand',
+                                    name='bookr',
+                                    value=(${book.getBookr()}),
+                                    error=(${bookrError})
+                                )"/>
+                                <th:block th:replace="fragments/account-fragments :: edit-book-input(
+                                    title='Release year',
+                                    name='year',
+                                    value=(${book.getYear()}),
+                                    error=(${yearError})
+                                )"/>
+<!--                                <th:block th:replace="fragments/account-fragments :: edit-book-input(-->
+<!--                                    title='Country',-->
+<!--                                    name='country',-->
+<!--                                    value=(${book.getCountry()}),-->
+<!--                                    error=(${countryError})-->
+<!--                                )"/>-->
+                                <th:block th:replace="fragments/account-fragments :: edit-book-select(
+                                    title='Book type',
+                                    name='type',
+                                    options=(${ {'Giải trí', 'Học thuật'} }),
+                                    value=(${book.getType()}),
+                                    error=(${typeError})
+                                )"/>
+<!--                                <th:block th:replace="fragments/account-fragments :: edit-book-input(-->
+<!--                                    title='Volume',-->
+<!--                                    name='volume',-->
+<!--                                    value=(${book.getVolume()}),-->
+<!--                                    error=(${volumeError})-->
+<!--                                )"/>-->
+                                <th:block th:replace="fragments/account-fragments :: edit-book-select(
+                                    title='Gender',
+                                    name='bookGender',
+                                    options=(${ {'male', 'female'} }),
+                                    value=(${book.getBookGender()}),
+                                    error=(${bookGenderError})
+                                )"/>
+<!--                                <th:block th:replace="fragments/account-fragments :: edit-book-input(-->
+<!--                                    title='Top notes',-->
+<!--                                    name='fragranceTopNotes',-->
+<!--                                    value=(${book.getFragranceTopNotes()}),-->
+<!--                                    error=(${fragranceTopNotesError})-->
+<!--                                )"/>-->
+<!--                                <th:block th:replace="fragments/account-fragments :: edit-book-input(-->
+<!--                                    title='Heart notes',-->
+<!--                                    name='fragranceMiddleNotes',-->
+<!--                                    value=(${book.getFragranceMiddleNotes()}),-->
+<!--                                    error=(${fragranceMiddleNotesError})-->
+<!--                                )"/>-->
+<!--                                <th:block th:replace="fragments/account-fragments :: edit-book-input(-->
+<!--                                    title='Base notes',-->
+<!--                                    name='fragranceBaseNotes',-->
+<!--                                    value=(${book.getFragranceBaseNotes()}),-->
+<!--                                    error=(${fragranceBaseNotesError})-->
+<!--                                )"/>-->
+                                <th:block th:replace="fragments/account-fragments :: edit-book-input(
+                                    title='Price',
+                                    name='price',
+                                    value=(${book.getPrice()}),
+                                    error=(${priceError})
+                                )"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div th:if="${book.imageLink != null}">
+                                    <img th:src="${book.imageLink}" class="rounded mx-auto w-100 mb-2"/>
+                                </div>
+                                <div th:unless="${book.imageLink != null}">
+                                    <img th:src="@{/img/{path} (path=${book.getFilename()})}" class="rounded mx-auto w-100 mb-2"/>
+                                </div>
+                                <input type="file" name="file"/>
+                            </div>
+
+                        </div>
+                        <input type="hidden" name="id" th:value="${book.getId()}"/>
+                        <input type="hidden" name="filename" th:value="${book.getFilename()}"/>
+                        <th:block th:replace="fragments/common-fragments :: icon-button(text='Edit', icon='fas fa-edit mr-2')"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+</body>
+</html>

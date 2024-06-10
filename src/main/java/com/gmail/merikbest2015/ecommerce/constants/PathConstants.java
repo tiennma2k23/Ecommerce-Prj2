@@ -1,7 +1,7 @@
 package com.gmail.merikbest2015.ecommerce.constants;
 
 public class PathConstants {
-    public static final String PERFUME = "/perfume";
+    public static final String BOOK = "/book";
     public static final String CART = "/cart";
     public static final String ORDER = "/order";
     public static final String USER = "/user";

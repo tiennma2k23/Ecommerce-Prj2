@@ -11,19 +11,19 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @EntityGraph(attributePaths = {"perfumes", "user", "user.roles"})
+    @EntityGraph(attributePaths = {"books", "user", "user.roles"})
     Page<Order> findAll(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"perfumes", "user", "user.roles"})
+    @EntityGraph(attributePaths = {"books", "user", "user.roles"})
     Optional<Order> getById(Long orderId);
 
-    @EntityGraph(attributePaths = {"perfumes"})
+    @EntityGraph(attributePaths = {"books"})
     Optional<Order> getByIdAndUserId(Long orderId, Long userId);
 
-    @EntityGraph(attributePaths = {"perfumes", "user", "user.roles"})
+    @EntityGraph(attributePaths = {"books", "user", "user.roles"})
     Page<Order> findOrderByUserId(Long userId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"perfumes", "user", "user.roles"})
+    @EntityGraph(attributePaths = {"books", "user", "user.roles"})
     @Query("SELECT orders FROM Order orders WHERE " +
             "(CASE " +
             "   WHEN :searchType = 'firstName' THEN UPPER(orders.firstName) " +
@@ -33,7 +33,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "LIKE UPPER(CONCAT('%',:text,'%'))")
     Page<Order> searchOrders(String searchType, String text, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"perfumes", "user", "user.roles"})
+    @EntityGraph(attributePaths = {"books", "user", "user.roles"})
     @Query("SELECT orders FROM Order orders " +
             "LEFT JOIN orders.user user " +
             "WHERE user.id = :userId " +

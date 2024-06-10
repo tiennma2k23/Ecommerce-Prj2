@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Book Released</title>
+    <style>
+        /* Điều chỉnh kiểu dáng email theo ý muốn */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>New Book Released</h1>
+    <p>Hello,</p>
+    <p>We are excited to inform you that a new book titled <strong th:text="${bookTitle}"></strong> has been released by <strong th:text="${authorName}"></strong>.</p>
+    <p>Thank you for your interest!</p>
+    <p>Best regards,</p>
+    <p>Your Bookstore Team</p>
+</div>
+</body>
+</html>

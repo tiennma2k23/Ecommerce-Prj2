@@ -1,0 +1,49 @@
+<div th:fragment="book-item(book)" class="col-lg-3 d-flex align-items-stretch">
+    <div class="card mb-5 shadow" th:if="${book.filename}">
+        <img th:src="@{${book.imageLink} ? ${book.imageLink} : '/img/' + ${book.filename}}" class="rounded mx-auto w-50">
+        <div class="card-body text-center">
+            <h5 th:text="${book.bookTitle}"></h5>
+            <h6 th:text="${book.authors}"></h6>
+            <h6>$<span th:text="${book.price}"></span>.00</h6>
+            <!-- Thêm trạng thái hàng tồn kho -->
+            <p class="product-stock" th:text="${book.quantity > 0 ? 'In Stock' : 'Out of Stock'}" th:classappend="${book.quantity > 0 ? 'text-success' : 'text-danger'}"></p>
+        </div>
+        <div class="text-center align-items-end mb-3">
+            <a th:href="@{/book/{bookId}(bookId=${book.id})}" class="btn btn-dark">SHOW MORE</a>
+        </div>
+    </div>
+</div>
+
+
+<div th:fragment="bookr-item" class="col-2 float-left">
+    <a th:href="@{/book?bookrs=${bookr}}">
+        <img class="img-fluid" th:src="${src}" alt="">
+    </a>
+</div>
+
+<div th:fragment="books-brand-checkbox(brand)" class="checkbox">
+    <label>
+        <input th:value="${brand}" type="checkbox" name="bookrs" onChange="this.form.submit()"
+               th:checked="${searchRequest.bookrs != null ? searchRequest.bookrs.contains(brand) : false}"/>
+        <span class="cr"><i class="cr-icon fas fa-check"></i></span>
+        <span th:text="${brand}"></span>
+    </label>
+</div>
+
+<div th:fragment="books-gender-checkbox(gender)" class="checkbox">
+    <label>
+        <input th:value="${gender}" type="checkbox" name="genders" onChange="this.form.submit()"
+               th:checked="${searchRequest.book_gender != null ? searchRequest.book_gender.contains(gender) : false}"/>
+        <span class="cr"><i class="cr-icon fas fa-check"></i></span>
+        <span th:text="${#strings.capitalize(gender)}"></span>
+    </label>
+</div>
+
+<div th:fragment="books-price-checkbox" class="checkbox">
+    <label>
+        <input th:value="${startingPrice}" type="radio" name="price" onChange="this.form.submit()"
+               th:checked="${searchRequest.price != null ? startingPrice == searchRequest.price : false}"/>
+        <span class="cr"><i class="cr-icon fas fa-check"></i></span>
+        <span th:text="${startingPrice == 0 ? 'any' : startingPrice + ' - ' + endingPrice + ' $'}"></span>
+    </label>
+</div>

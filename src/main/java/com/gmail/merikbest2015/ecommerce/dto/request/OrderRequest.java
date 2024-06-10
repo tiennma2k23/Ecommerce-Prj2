@@ -1,12 +1,16 @@
 package com.gmail.merikbest2015.ecommerce.dto.request;
 
 import com.gmail.merikbest2015.ecommerce.constants.ErrorMessage;
+import com.gmail.merikbest2015.ecommerce.domain.Book;
 import lombok.Data;
 
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class OrderRequest {
@@ -33,6 +37,8 @@ public class OrderRequest {
     @NotBlank(message = ErrorMessage.EMPTY_PHONE_NUMBER)
     private String phoneNumber;
 
-    @Min(value = 5, message = ErrorMessage.EMPTY_POST_INDEX)
-    private Integer postIndex;
+    @ManyToMany
+    private List<Book> books = new ArrayList<>();
+
+
 }

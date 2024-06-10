@@ -1,13 +1,13 @@
 package com.gmail.merikbest2015.ecommerce.service.impl;
 
-import com.gmail.merikbest2015.ecommerce.constants.ErrorMessage;
 import com.gmail.merikbest2015.ecommerce.constants.SuccessMessage;
+import com.gmail.merikbest2015.ecommerce.repository.UserRepository;
+import com.gmail.merikbest2015.ecommerce.constants.ErrorMessage;
 import com.gmail.merikbest2015.ecommerce.domain.Role;
 import com.gmail.merikbest2015.ecommerce.domain.User;
 import com.gmail.merikbest2015.ecommerce.dto.response.CaptchaResponse;
 import com.gmail.merikbest2015.ecommerce.dto.response.MessageResponse;
 import com.gmail.merikbest2015.ecommerce.dto.request.UserRequest;
-import com.gmail.merikbest2015.ecommerce.repository.UserRepository;
 import com.gmail.merikbest2015.ecommerce.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

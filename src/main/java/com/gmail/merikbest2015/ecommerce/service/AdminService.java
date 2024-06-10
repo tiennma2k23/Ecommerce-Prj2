@@ -1,21 +1,21 @@
 package com.gmail.merikbest2015.ecommerce.service;
 
+import com.gmail.merikbest2015.ecommerce.domain.Book;
 import com.gmail.merikbest2015.ecommerce.domain.Order;
-import com.gmail.merikbest2015.ecommerce.domain.Perfume;
-import com.gmail.merikbest2015.ecommerce.domain.User;
-import com.gmail.merikbest2015.ecommerce.dto.request.PerfumeRequest;
 import com.gmail.merikbest2015.ecommerce.dto.request.SearchRequest;
 import com.gmail.merikbest2015.ecommerce.dto.response.MessageResponse;
 import com.gmail.merikbest2015.ecommerce.dto.response.UserInfoResponse;
+import com.gmail.merikbest2015.ecommerce.domain.User;
+import com.gmail.merikbest2015.ecommerce.dto.request.BookRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AdminService {
 
-    Page<Perfume> getPerfumes(Pageable pageable);
+    Page<Book> getBooks(Pageable pageable);
 
-    Page<Perfume> searchPerfumes(SearchRequest request, Pageable pageable);
+    Page<Book> searchBooks(SearchRequest request, Pageable pageable);
 
     Page<User> getUsers(Pageable pageable);
 
@@ -27,11 +27,11 @@ public interface AdminService {
 
     Page<Order> searchOrders(SearchRequest request, Pageable pageable);
 
-    Perfume getPerfumeById(Long perfumeId);
+    Book getBookById(Long bookId);
 
-    MessageResponse editPerfume(PerfumeRequest perfumeRequest, MultipartFile file);
+    MessageResponse editBook(BookRequest bookRequest, MultipartFile file);
 
-    MessageResponse addPerfume(PerfumeRequest perfumeRequest, MultipartFile file);
+    MessageResponse addBook(BookRequest bookRequest, MultipartFile file);
 
     UserInfoResponse getUserById(Long userId, Pageable pageable);
 }

@@ -1,17 +1,17 @@
 package com.gmail.merikbest2015.ecommerce.constants;
 
 public class Pages {
-    public static final String ADMIN_PERFUMES = "admin-perfumes";
-    public static final String ADMIN_EDIT_PERFUME = "admin-edit-perfume";
-    public static final String ADMIN_ADD_PERFUME = "admin-add-perfume";
+    public static final String ADMIN_BOOKS = "admin-books";
+    public static final String ADMIN_EDIT_BOOK = "admin-edit-book";
+    public static final String ADMIN_ADD_BOOK = "admin-add-book";
     public static final String ADMIN_ALL_USERS = "admin-all-users";
     public static final String ADMIN_USER_DETAIL = "admin-user-detail";
     public static final String ORDER = "order";
     public static final String ORDERS = "orders";
     public static final String ORDERING = "ordering";
     public static final String ORDER_FINALIZE = "order-finalize";
-    public static final String PERFUME = "perfume";
-    public static final String PERFUMES = "perfumes";
+    public static final String BOOK = "book";
+    public static final String BOOKS = "books";
     public static final String USER_ACCOUNT = "user-account";
     public static final String USER_INFO = "user-info";
     public static final String USER_INFO_EDIT = "user-info-edit";

@@ -2,7 +2,7 @@ package com.gmail.merikbest2015.ecommerce.controller;
 
 import com.gmail.merikbest2015.ecommerce.constants.Pages;
 import com.gmail.merikbest2015.ecommerce.constants.PathConstants;
-import com.gmail.merikbest2015.ecommerce.dto.request.PerfumeRequest;
+import com.gmail.merikbest2015.ecommerce.dto.request.BookRequest;
 import com.gmail.merikbest2015.ecommerce.dto.request.SearchRequest;
 import com.gmail.merikbest2015.ecommerce.dto.response.UserInfoResponse;
 import com.gmail.merikbest2015.ecommerce.service.AdminService;
@@ -28,16 +28,16 @@ public class AdminController {
     private final AdminService adminService;
     private final ControllerUtils controllerUtils;
 
-    @GetMapping("/perfumes")
-    public String getPerfumes(Pageable pageable, Model model) {
-        controllerUtils.addPagination(model, adminService.getPerfumes(pageable));
-        return Pages.ADMIN_PERFUMES;
+    @GetMapping("/books")
+    public String getBooks(Pageable pageable, Model model) {
+        controllerUtils.addPagination(model, adminService.getBooks(pageable));
+        return Pages.ADMIN_BOOKS;
     }
 
-    @GetMapping("/perfumes/search")
-    public String searchPerfumes(SearchRequest request, Pageable pageable, Model model) {
-        controllerUtils.addPagination(request, model, adminService.searchPerfumes(request, pageable));
-        return Pages.ADMIN_PERFUMES;
+    @GetMapping("/books/search")
+    public String searchBooks(SearchRequest request, Pageable pageable, Model model) {
+        controllerUtils.addPagination(request, model, adminService.searchBooks(request, pageable));
+        return Pages.ADMIN_BOOKS;
     }
 
     @GetMapping("/users")
@@ -70,33 +70,33 @@ public class AdminController {
         return Pages.ORDERS;
     }
 
-    @GetMapping("/perfume/{perfumeId}")
-    public String getPerfume(@PathVariable Long perfumeId, Model model) {
-        model.addAttribute("perfume", adminService.getPerfumeById(perfumeId));
-        return Pages.ADMIN_EDIT_PERFUME;
+    @GetMapping("/book/{bookId}")
+    public String getBook(@PathVariable Long bookId, Model model) {
+        model.addAttribute("book", adminService.getBookById(bookId));
+        return Pages.ADMIN_EDIT_BOOK;
     }
 
-    @PostMapping("/edit/perfume")
-    public String editPerfume(@Valid PerfumeRequest perfume, BindingResult bindingResult, Model model,
+    @PostMapping("/edit/book")
+    public String editBook(@Valid BookRequest book, BindingResult bindingResult, Model model,
                               @RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
-        if (controllerUtils.validateInputFields(bindingResult, model, "perfume", perfume)) {
-            return Pages.ADMIN_EDIT_PERFUME;
+        if (controllerUtils.validateInputFields(bindingResult, model, "book", book)) {
+            return Pages.ADMIN_EDIT_BOOK;
         }
-        return controllerUtils.setAlertFlashMessage(attributes, "/admin/perfumes", adminService.editPerfume(perfume, file));
+        return controllerUtils.setAlertFlashMessage(attributes, "/admin/books", adminService.editBook(book, file));
     }
 
-    @GetMapping("/add/perfume")
-    public String addPerfume() {
-        return Pages.ADMIN_ADD_PERFUME;
+    @GetMapping("/add/book")
+    public String addBook() {
+        return Pages.ADMIN_ADD_BOOK;
     }
 
-    @PostMapping("/add/perfume")
-    public String addPerfume(@Valid PerfumeRequest perfume, BindingResult bindingResult, Model model,
+    @PostMapping("/add/book")
+    public String addBook(@Valid BookRequest book, BindingResult bindingResult, Model model,
                              @RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
-        if (controllerUtils.validateInputFields(bindingResult, model, "perfume", perfume)) {
-            return Pages.ADMIN_ADD_PERFUME;
+        if (controllerUtils.validateInputFields(bindingResult, model, "book", book)) {
+            return Pages.ADMIN_ADD_BOOK;
         }
-        return controllerUtils.setAlertFlashMessage(attributes, "/admin/perfumes", adminService.addPerfume(perfume, file));
+        return controllerUtils.setAlertFlashMessage(attributes, "/admin/books", adminService.addBook(book, file));
     }
 
     @GetMapping("/user/{userId}")

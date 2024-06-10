@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head">
+
+</head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="py-5">
+        <div class="container py-5 bg-white shadow-sm card-height">
+            <div class="row mx-3">
+                <th:block th:replace="fragments/account-fragments :: account-sidebar"/>
+                <div class="col-md-9 mb-5">
+                    <th:block th:replace="fragments/common-fragments :: info-title(
+                        text='Add book',
+                        icon='fas fa-plus-square mr-2'
+                    )"/>
+                    <br/>
+                    <form method="post" action="/admin/add/book" enctype="multipart/form-data">
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='isbn',
+                                name='isbn',
+                                placeholder='Enter the ISBN',
+                                id='isbn',
+                                class='isbn',
+                                value=(${book} ? ${book.isbn} : ''),
+                                error=(${isbnError})
+                            )"/>
+                        </div>
+                        <div class="form row">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Book title',
+                                name='bookTitle',
+                                placeholder='Enter the book title',
+                                value=(${book} ? ${book.bookTitle} : ''),
+                                error=(${bookTitleError}),
+                                id='bookTitle'
+                            )"/>
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Nhà xuất bản',
+                                name='bookr',
+                                id='bookr',
+                                placeholder='Enter the brand',
+                                value=(${book} ? ${book.bookr} : ''),
+                                error=(${bookrError})
+                            )"/>
+                        </div>
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Description',
+                                name='description',
+                                id='description',
+                                placeholder='Enter the description',
+                                value=(${book} ? ${book.description} : ''),
+                                error=(${descriptionError})
+                            )"/>
+                        </div>
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Authors',
+                                name='authors',
+                                id='authors',
+                                placeholder='Enter authors',
+                                value=(${book} ? ${book.authors} : ''),
+                                error=(${authorsError})
+                            )"/>
+                        </div>
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Release year',
+                                name='year',
+                                id='year',
+                                placeholder='Enter the release year',
+                                value=(${book} ? ${book.year} : ''),
+                                error=(${yearError})
+                            )"/>
+                        </div>
+
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Price',
+                                name='price',
+                                id='price',
+                                placeholder='Enter the price',
+                                value=(${book} ? ${book.price} : ''),
+                                error=(${priceError})
+                            )"/>
+                            <div class="col" style="margin-top: 35px">
+                                <input type="file" name="file" id="file"/>
+                                <label for="file">Tải ảnh lên</label>
+                            </div>
+                        </div>
+
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Pdf Link',
+                                name='pdfLink',
+                                id='pdfLink',
+                                value=(${book} ? ${book.pdfLink} : ''),
+                                error=(${pdfLinkError})
+                            )"/>
+
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Image Link',
+                                name='imageLink',
+                                id='imageLink',
+                                value=(${book} ? ${book.imageLink} : ''),
+                                error=(${imageLinkError})
+                            )"/>
+                        </div>
+
+                        <!-- Thêm trường nhập số lượng -->
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-book-input(
+                                title='Quantity',
+                                name='quantity',
+                                id='quantity',
+                                placeholder='Enter the quantity',
+                                value=(${book} ? ${book.quantity} : ''),
+                                error=(${quantityError})
+                            )"/>
+                        </div>
+
+                        <th:block th:replace="fragments/common-fragments :: icon-button(
+                            text='Add',
+                            buttonClassName='mt-3',
+                            icon='fas fa-plus-square mr-2'
+                        )"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<footer th:insert="~{fragments/common-fragments :: footer}"></footer>-->
+<!-- Thêm thư viện jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        // Lắng nghe sự kiện khi trường ISBN thay đổi
+        $('#isbn').on('input', function(){
+            console.log(111);
+            getBookDetails();
+        });
+
+        // Hàm gọi API Google Books để lấy thông tin sách
+        function getBookDetails() {
+            var isbn = $('#isbn').val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/search/book?isbn=' + isbn,
+                success: function(response) {
+                    if (response) {
+                        fillFormFields(response);
+                    }
+                    {
+                        // Nếu sách không được tìm thấy trong cơ sở dữ liệu, thực hiện tìm kiếm trên Google Books API
+                        var apiUrl = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' + isbn + '&key=AIzaSyDfzbl5Df5pZ02mmOATHko4xiUIkEzI3Fs'; // Thay YOUR_API_KEY bằng API key của bạn
+                        $.ajax({
+                            type: 'GET',
+                            url: apiUrl,
+                            success: function(response) {
+                                // Xử lý dữ liệu trả về từ API
+                                if (response.totalItems > 0) {
+                                    var bookInfo = response.items[0].volumeInfo;
+                                    var bookPdfLink = response.items[0].accessInfo ? response.items[0].accessInfo.webReaderLink : '';
+                                    var book = {
+                                        bookTitle: bookInfo.title,
+                                        authors: bookInfo.authors ? bookInfo.authors.join(', ') : '',
+                                        description: bookInfo.description,
+                                        year: bookInfo.publishedDate ? new Date(bookInfo.publishedDate).getFullYear() : null,
+                                        price: null,
+                                        pdfLink: bookPdfLink, // Không có dữ liệu PDF trong phản hồi
+                                        imageLink: bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : '',
+                                        quantity: 1 // Giá trị mặc định cho số lượng
+                                    };
+                                    fillFormFields(book);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+
+        function fillFormFields(book) {
+            if (book.bookTitle !== null) $('#bookTitle').val(book.bookTitle);
+            if (book.authors !== null) $('#authors').val(book.authors);
+            if (book.description !== null) $('#description').val(book.description);
+            if (book.year !== null) $('#year').val(book.year);
+            if (book.price !== null) $('#price').val(book.price);
+            if (book.pdfLink !== null) $('#pdfLink').val(book.pdfLink);
+            if (book.imageLink !== null) $('#imageLink').val(book.imageLink);
+            // if (book.quantity !== null) $('#quantity').val(book.quantity); // Điền số lượng vào trường số lượng
+        }
+    });
+</script>
+</body>
+
+</html>

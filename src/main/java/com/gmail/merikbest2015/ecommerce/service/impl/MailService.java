@@ -48,4 +48,28 @@ public class MailService {
         });
         executor.shutdown();
     }
+    public void sendAuthorNewBookEmail(String to, String bookTitle, String authorName) {
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        executor.execute(() -> {
+            Context thymeleafContext = new Context();
+            thymeleafContext.setVariable("bookTitle", bookTitle);
+            thymeleafContext.setVariable("authorName", authorName);
+            String htmlBody = thymeleafTemplateEngine.process("email/author_new_book", thymeleafContext);
+            MimeMessage message = mailSender.createMimeMessage();
+            try {
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                helper.setFrom(username);
+                helper.setTo(to);
+                helper.setSubject("New Book Released by " + authorName);
+                helper.setText(htmlBody, true);
+                mailSender.send(message);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        executor.shutdown();
+    }
+
+
+
 }

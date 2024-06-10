@@ -62,5 +62,5 @@ public class User {
     private Set<Role> roles;
 
     @ManyToMany
-    private List<Perfume> perfumeList;
+    private List<Book> bookList;
 }

@@ -42,11 +42,8 @@ public class Order {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "post_index", nullable = false)
-    private Integer postIndex;
-
     @ManyToMany
-    private List<Perfume> perfumes = new ArrayList<>();
+    private List<Book> books;
 
     @ManyToOne
     private User user;

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head">
+    <script th:inline="javascript">
+        function searchOther2() {
+            var keyword = document.getElementById('other2').value;
+            var pdfUrl = "https://drive.google.com/file/d/1HclAAYlTRkc7709TLypGJeDYMTMSfzub/view";
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/search?keyword=" + encodeURIComponent(keyword) + "&pdfUrl=" + encodeURIComponent(pdfUrl), true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response === true) {
+                        alert("Từ khoá được tìm thấy trong PDF.");
+                    } else {
+                        alert("Từ khoá không được tìm thấy trong PDF.");
+                    }
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="container d-flex bg-white shadow-sm">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Books</h3>
+            </div>
+            <form action="/book" method="get">
+                <ul class="list-unstyled components">
+                    <h5>Book type</h5>
+                    <li class="active mb-2" id="homeSubmenu">
+<!--                        <ul class="list-unstyled">-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Burberry')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Bvlgari')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Calvin Klein')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Carolina Herrera')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Chanel')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Creed')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Dior')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Dolce&Gabbana')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Este Lauder')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Giorgio Armani')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Givency')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Gucci')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Guerlain')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Hermes')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Hugo Boss')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Jean Paul Gaultier')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Lancome')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Nina Ricci')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Paco Rabanne')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Prada')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Tom Ford')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Valentino')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Versace')"></li>-->
+<!--                            <li th:insert="fragments/books-fragments :: books-brand-checkbox('Victoria`s Secret')"></li>-->
+<!--                        </ul>-->
+                    </li>
+                    <h5>Gender</h5>
+                    <li class="active mb-2">
+                        <ul class="list-unstyled">
+                            <li th:insert="fragments/books-fragments :: books-gender-checkbox('female')"></li>
+                            <li th:insert="fragments/books-fragments :: books-gender-checkbox('male')"></li>
+                        </ul>
+                    </li>
+                    <h5>Price</h5>
+                    <li class="active mb-2">
+                        <ul class="list-unstyled">
+                            <li th:insert="fragments/books-fragments :: books-price-checkbox(startingPrice=0, endingPrice=200)"></li>
+                            <li th:insert="fragments/books-fragments :: books-price-checkbox(startingPrice=10, endingPrice=60)"></li>
+                            <li th:insert="fragments/books-fragments :: books-price-checkbox(startingPrice=60, endingPrice=110)"></li>
+                            <li th:insert="fragments/books-fragments :: books-price-checkbox(startingPrice=110, endingPrice=160)"></li>
+                            <li th:insert="fragments/books-fragments :: books-price-checkbox(startingPrice=160, endingPrice=210)"></li>
+                        </ul>
+                    </li>
+                </ul>
+            </form>
+        </nav>
+        <div class="container mb-5">
+            <div class="container-fluid mt-5 ml-1">
+                <form action="/book/search" method="get" style="justify-content: center">
+                    <input type="text" id="other2" name="other2" placeholder="Nhập từ khoá">
+                    <button type="button" onclick="searchOther2()">Tìm kiếm trong PDF</button>
+                </form>
+                <form action="/book/search" method="get" style="justify-content: center">
+                    <th:block th:replace="~{fragments/common-fragments :: search(
+                        options=(${ {
+                            { value: 'bookTitle', text: 'Book title' },
+                            { value: 'description', text: 'Others' }
+                        } })
+                    )}"/>
+                </form>
+            </div>
+            <div class="mt-4 ml-1">
+                <th:block th:replace="~{fragments/common-fragments :: pagination(class='mx-3')}"/>
+                <div class="container-fluid">
+                    <div class="row" th:fragment="list">
+                        <th:block th:if="${page.getContent().size() == 0}"
+                                  th:insert="~{fragments/common-fragments :: empty-result(text='Books not found')}"/>
+                        <th:block th:unless="${page.getContent().size() == 0}" th:each="book : ${page.getContent()}">
+                            <th:block th:replace="fragments/books-fragments :: book-item(${book})"/>
+                        </th:block>
+                    </div>
+                </div>
+                <th:block th:if="${page.getContent().size() != 0}">
+                    <th:block th:replace="~{fragments/common-fragments :: pagination(class='mx-3')}"/>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+</body>
+</html>

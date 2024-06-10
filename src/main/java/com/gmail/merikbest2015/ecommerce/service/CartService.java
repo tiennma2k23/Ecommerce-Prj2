@@ -1,14 +1,14 @@
 package com.gmail.merikbest2015.ecommerce.service;
 
-import com.gmail.merikbest2015.ecommerce.domain.Perfume;
+import com.gmail.merikbest2015.ecommerce.domain.Book;
 
 import java.util.List;
 
 public interface CartService {
 
-    List<Perfume> getPerfumesInCart();
+    List<Book> getBooksInCart();
 
-    void addPerfumeToCart(Long perfumeId);
+    void addBookToCart(Long bookId);
 
-    void removePerfumeFromCart(Long perfumeId);
+    void removeBookFromCart(Long bookId);
 }

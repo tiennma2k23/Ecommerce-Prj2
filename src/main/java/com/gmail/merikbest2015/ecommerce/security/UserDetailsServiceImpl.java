@@ -1,7 +1,7 @@
 package com.gmail.merikbest2015.ecommerce.security;
 
-import com.gmail.merikbest2015.ecommerce.domain.User;
 import com.gmail.merikbest2015.ecommerce.repository.UserRepository;
+import com.gmail.merikbest2015.ecommerce.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;

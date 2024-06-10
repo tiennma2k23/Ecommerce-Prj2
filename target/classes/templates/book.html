@@ -1,0 +1,113 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="container pt-5 pb-5 bg-white shadow-sm">
+        <div class="row">
+            <div class="col-md-5">
+                <img th:if="${book.imageLink != null}" th:src="${book.imageLink}" class="rounded mx-auto w-100">
+                <img th:unless="${book.imageLink != null}" th:src="@{/img/{path}(path=*{book.filename})}" class="rounded mx-auto w-100">
+            </div>
+            <div class="col-md-7">
+                <h2 th:text="${book.getBookTitle()}"></h2>
+                <h3 th:text="${book.getAuthors()}"></h3>
+                <p>Product code: <span th:text="${book.getId()}"></span></p>
+                <p class="product-stock" th:if="${book.getQuantity() > 0}" th:text="' ' + ${book.getQuantity()} + ' books left'" th:class="${'text-success'}"></p>
+                <p class="product-stock" th:unless="${book.getQuantity() > 0}" th:text="'Out of Stock'" th:class="${'text-danger'}"></p>
+
+                <div class="row ml-1">
+                    <h6 class="mr-5">
+                        $<span th:text="${book.getPrice()}"></span>.00
+                    </h6>
+                    <form action="/cart/add" method="post">
+                        <button type="submit" name="bookId" class="btn btn-success mx-3"
+                                th:value="${book.getId()}">
+                            <i class="fas fa-cart-plus mr-2 fa-lg"></i>
+                            ADD TO CART
+                        </button>
+                    </form>
+                </div>
+                <br>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>Book title:</td>
+                        <td th:text="${book.getBookTitle()}"></td>
+                    </tr>
+                    <tr>
+                        <td>Author:</td>
+                        <td><span id="author-name" th:text="${book.getAuthors()}"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td th:text="${book.getDescription()}"></td>
+                    </tr>
+<!--                    <tr>-->
+<!--                        <td>Book type:</td>-->
+<!--                        <td th:text="${book.getType()}"></td>-->
+<!--                    </tr>-->
+                    <tr>
+                        <td>Release year:</td>
+                        <td th:text="${book.getYear()}"></td>
+                    </tr>
+                    <tr>
+                        <td>Read it here:</td>
+                        <td>
+                            <a th:href="${book.getPdfLink()}" target="_blank">Link đọc thử</a>
+                        </td>
+                    </tr>
+
+<!--                    <tr>-->
+<!--                        <td>Manufacturer country:</td>-->
+<!--                        <td th:text="${book.getCountry()}"></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td>Gender:</td>-->
+<!--                        <td th:text="${book.getBookGender()}"></td>-->
+<!--                    </tr>-->
+                    </tbody>
+                </table>
+                <div id="author-popup" class="popup hidden">
+                    <div class="popup-content">
+                        <h4 id="popup-author-name"></h4>
+                        <p>Thông tin tác giả</p>
+                        <p>Name :Steve McConnell</p>
+                        <button id="follow-button">Follow</button>
+                        <span class="close">&times;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+<script>
+    const authorNameElement = document.getElementById('author-name');
+    const popupElement = document.getElementById('author-popup');
+    const popupAuthorNameElement = document.getElementById('popup-author-name');
+    const followButtonElement = document.getElementById('follow-button');
+    const closeButtonElement = document.querySelector('.close');
+
+    authorNameElement.addEventListener('click', () => {
+        popupAuthorNameElement.textContent = authorNameElement.textContent;
+        popupElement.classList.remove('hidden');
+    });
+
+    closeButtonElement.addEventListener('click', () => {
+        popupElement.classList.add('hidden');
+    });
+
+    // Thêm chức năng follow (ví dụ: cập nhật localStorage hoặc gửi yêu cầu AJAX)
+    followButtonElement.addEventListener('click', () => {
+        alert("Bạn theo dõi Steve McConnell thành công")
+        // Code xử lý follow tác giả
+    });
+
+</script>
+</body>
+</html>

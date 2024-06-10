@@ -20,19 +20,19 @@ public class CartController {
 
     @GetMapping
     public String getCart(Model model) {
-        model.addAttribute("perfumes", cartService.getPerfumesInCart());
+        model.addAttribute("books", cartService.getBooksInCart());
         return Pages.CART;
     }
 
     @PostMapping("/add")
-    public String addPerfumeToCart(@RequestParam("perfumeId") Long perfumeId) {
-        cartService.addPerfumeToCart(perfumeId);
+    public String addBookToCart(@RequestParam("bookId") Long bookId) {
+        cartService.addBookToCart(bookId);
         return "redirect:" + PathConstants.CART;
     }
 
     @PostMapping("/remove")
-    public String removePerfumeFromCart(@RequestParam("perfumeId") Long perfumeId) {
-        cartService.removePerfumeFromCart(perfumeId);
+    public String removeBookFromCart(@RequestParam("bookId") Long bookId) {
+        cartService.removeBookFromCart(bookId);
         return "redirect:" + PathConstants.CART;
     }
 }

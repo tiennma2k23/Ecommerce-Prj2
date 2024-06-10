@@ -1,21 +1,25 @@
 package com.gmail.merikbest2015.ecommerce.service.impl;
 
-import com.gmail.merikbest2015.ecommerce.constants.ErrorMessage;
 import com.gmail.merikbest2015.ecommerce.constants.SuccessMessage;
+import com.gmail.merikbest2015.ecommerce.domain.Author;
+import com.gmail.merikbest2015.ecommerce.repository.AuthorRepository;
+import com.gmail.merikbest2015.ecommerce.repository.BookRepository;
+import com.gmail.merikbest2015.ecommerce.repository.OrderRepository;
+import com.gmail.merikbest2015.ecommerce.repository.UserRepository;
+import com.gmail.merikbest2015.ecommerce.constants.ErrorMessage;
 import com.gmail.merikbest2015.ecommerce.domain.Order;
-import com.gmail.merikbest2015.ecommerce.domain.Perfume;
+import com.gmail.merikbest2015.ecommerce.domain.Book;
 import com.gmail.merikbest2015.ecommerce.domain.User;
-import com.gmail.merikbest2015.ecommerce.dto.request.PerfumeRequest;
+import com.gmail.merikbest2015.ecommerce.dto.request.BookRequest;
 import com.gmail.merikbest2015.ecommerce.dto.request.SearchRequest;
 import com.gmail.merikbest2015.ecommerce.dto.response.MessageResponse;
 import com.gmail.merikbest2015.ecommerce.dto.response.UserInfoResponse;
-import com.gmail.merikbest2015.ecommerce.repository.OrderRepository;
-import com.gmail.merikbest2015.ecommerce.repository.PerfumeRepository;
-import com.gmail.merikbest2015.ecommerce.repository.UserRepository;
 import com.gmail.merikbest2015.ecommerce.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,28 +31,33 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     @Value("${upload.path}")
     private String uploadPath;
 
     private final UserRepository userRepository;
-    private final PerfumeRepository perfumeRepository;
+    private final BookRepository bookRepository;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
+    private final MailService mailService;
+    private final AuthorRepository authorRepository;
 
     @Override
-    public Page<Perfume> getPerfumes(Pageable pageable) {
-        return perfumeRepository.findAllByOrderByPriceAsc(pageable);
+    public Page<Book> getBooks(Pageable pageable) {
+        return bookRepository.findAllByOrderByPriceAsc(pageable);
     }
 
     @Override
-    public Page<Perfume> searchPerfumes(SearchRequest request, Pageable pageable) {
-        return perfumeRepository.searchPerfumes(request.getSearchType(), request.getText(), pageable);
+    public Page<Book> searchBooks(SearchRequest request, Pageable pageable) {
+        return bookRepository.searchBooks(request.getSearchType(), request.getText(), pageable);
     }
 
     @Override
@@ -79,23 +88,23 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Perfume getPerfumeById(Long perfumeId) {
-        return perfumeRepository.findById(perfumeId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.PERFUME_NOT_FOUND));
+    public Book getBookById(Long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.BOOK_NOT_FOUND));
     }
 
     @Override
     @SneakyThrows
     @Transactional
-    public MessageResponse editPerfume(PerfumeRequest perfumeRequest, MultipartFile file) {
-        return savePerfume(perfumeRequest, file, SuccessMessage.PERFUME_EDITED);
+    public MessageResponse editBook(BookRequest bookRequest, MultipartFile file) {
+        return saveBook(bookRequest, file, SuccessMessage.BOOK_EDITED);
     }
 
     @Override
     @SneakyThrows
     @Transactional
-    public MessageResponse addPerfume(PerfumeRequest perfumeRequest, MultipartFile file) {
-        return savePerfume(perfumeRequest, file, SuccessMessage.PERFUME_ADDED);
+    public MessageResponse addBook(BookRequest bookRequest, MultipartFile file) {
+        return saveBook(bookRequest, file, SuccessMessage.BOOK_ADDED);
     }
 
     @Override
@@ -106,20 +115,102 @@ public class AdminServiceImpl implements AdminService {
         return new UserInfoResponse(user, orders);
     }
 
-    private MessageResponse savePerfume(PerfumeRequest perfumeRequest, MultipartFile file, String message) throws IOException {
-        Perfume perfume = modelMapper.map(perfumeRequest, Perfume.class);
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-            perfume.setFilename(resultFilename);
+    private MessageResponse saveBook(BookRequest book, MultipartFile file, String message) throws IOException {
+        Book existingBook = bookRepository.findBookByIsbn(book.getIsbn());
+        if (message.equals(SuccessMessage.BOOK_ADDED) && existingBook !=null)
+        {
+            int newQuantity = existingBook.getQuantity() != null ? existingBook.getQuantity() + book.getQuantity() : book.getQuantity();
+            existingBook.setQuantity(newQuantity);
+            bookRepository.save(existingBook);
+//            return new MessageResponse("alert-fail",SuccessMessage.BOOK_EXIST);
         }
-        perfumeRepository.save(perfume);
+        else if (existingBook == null){
+            // Nếu chưa tồn tại, thêm mới
+            Book newBook = new Book();
+
+            newBook.setAuthors(book.getAuthors());
+            newBook.setBookGender(book.getBookGender());
+            newBook.setBookTitle(book.getBookTitle());
+            newBook.setDescription(book.getDescription());
+            newBook.setImageLink(book.getImageLink());
+            newBook.setPdfLink(book.getPdfLink());
+            newBook.setYear(book.getYear());
+            newBook.setFilename(book.getFilename());
+            newBook.setBookr(book.getBookr());
+            newBook.setCountry(book.getCountry());
+            newBook.setIsbn(book.getIsbn());
+            newBook.setPrice(book.getPrice());
+
+
+            if (file != null && !file.getOriginalFilename().isEmpty()) {
+                File uploadDir = new File(uploadPath);
+
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+                String uuidFile = UUID.randomUUID().toString();
+                String resultFilename = uuidFile + "." + file.getOriginalFilename();
+                file.transferTo(new File(uploadPath + "/" + resultFilename));
+                newBook.setFilename(resultFilename);
+            }
+
+            log.error(String.valueOf(book));
+            bookRepository.save(newBook);
+        }
+        else {
+            existingBook.setAuthors(book.getAuthors());
+            existingBook.setBookGender(book.getBookGender());
+            existingBook.setBookTitle(book.getBookTitle());
+            existingBook.setDescription(book.getDescription());
+            existingBook.setImageLink(book.getImageLink());
+            existingBook.setPdfLink(book.getPdfLink());
+            existingBook.setYear(book.getYear());
+            existingBook.setFilename(book.getFilename());
+            existingBook.setBookr(book.getBookr());
+            existingBook.setCountry(book.getCountry());
+            existingBook.setIsbn(book.getIsbn());
+            existingBook.setPrice(book.getPrice());
+
+
+            if (file != null && !file.getOriginalFilename().isEmpty()) {
+                File uploadDir = new File(uploadPath);
+
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+                String uuidFile = UUID.randomUUID().toString();
+                String resultFilename = uuidFile + "." + file.getOriginalFilename();
+                file.transferTo(new File(uploadPath + "/" + resultFilename));
+                existingBook.setFilename(resultFilename);
+            }
+
+            log.error(String.valueOf(book));
+            bookRepository.save(existingBook);
+        }
+        String[] authorNames = book.getAuthors().split(", ");
+        for (String authorName : authorNames) {
+            Author author = authorRepository.findByName(authorName);
+            if (author == null) {
+                author = new Author();
+                author.setName(authorName);
+                authorRepository.save(author);
+            }
+        }
+        // Gửi email cho tất cả người dùng quan tâm đến tác giả
+        for (String authorName : authorNames) {
+            Author author = authorRepository.findByName(authorName);
+            if (author.getUsersId()==null) author.setUsersId("");
+            if (author != null && author.getUsersId() != null && !author.getUsersId().isEmpty()) {
+                String[] userIds=author.getUsersId().split(", ");
+                for (String val:userIds)
+                {
+                    if (val.isEmpty()) continue;
+                    Long userId= Long.parseLong(val);
+                    Optional<User> user=userRepository.findById(userId);
+                    mailService.sendAuthorNewBookEmail(user.get().getEmail(), book.getBookTitle(), authorName);
+                }
+            }
+        }
         return new MessageResponse("alert-success", message);
     }
 }
